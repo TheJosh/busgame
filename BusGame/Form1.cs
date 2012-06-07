@@ -25,8 +25,8 @@ namespace BusGame
         }
 
         public void newgame() {
-            ship = new Bitmap("C:\\Users\\Josh\\Desktop\\Ship.png");
-            bullet = new Bitmap("C:\\Users\\Josh\\Desktop\\Bullet.png");
+            ship = new Bitmap(Application.StartupPath + "\\Ship.png");
+            bullet = new Bitmap(Application.StartupPath + "\\Bullet.png");
 
             player1 = new Point(100, this.Height / 2);
             player2 = new Point(this.Width - 100, this.Height / 2);
