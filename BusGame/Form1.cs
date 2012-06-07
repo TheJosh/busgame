@@ -21,13 +21,20 @@ namespace BusGame
         public Form1()
         {
             InitializeComponent();
-            newgame();
-        }
-        
-        public void newgame() {
+
             ship = new Bitmap(Application.StartupPath + "\\Ship.png");
             bullet = new Bitmap(Application.StartupPath + "\\Bullet.png");
 
+            this.WindowState = FormWindowState.Maximized;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            newgame();
+        }
+
+        public void newgame() {
             player1 = new Point(100, (this.ClientSize.Height - ship.Height) / 2);
             player2 = new Point(this.Width - ship.Width - 100, (this.ClientSize.Height - ship.Height) / 2);
             bullets = new List<Bullet>();
@@ -88,6 +95,8 @@ namespace BusGame
                 case Keys.O: player2.Y -= 10; break;
                 case Keys.L: player2.Y += 10; break;
                 case Keys.U: fire(player2, -30); break;
+
+                case Keys.Escape: Application.Exit(); break;
             }
         }
 
