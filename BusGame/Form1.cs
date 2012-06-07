@@ -13,10 +13,13 @@ namespace BusGame
     {
         Bitmap ship;
         Bitmap bullet;
+        Bitmap cow;
 
         Point player1;
         Point player2;
         List<Bullet> bullets;
+        List<Cow> cows;
+        Random r;
 
         public Form1()
         {
@@ -24,9 +27,11 @@ namespace BusGame
 
             ship = new Bitmap(Application.StartupPath + "\\Ship.png");
             bullet = new Bitmap(Application.StartupPath + "\\Bullet.png");
-
+            cow = new Bitmap(Application.StartupPath + "\\Cow.png");
+            
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.DoubleBuffered = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -37,7 +42,10 @@ namespace BusGame
         public void newgame() {
             player1 = new Point(100, (this.ClientSize.Height - ship.Height) / 2);
             player2 = new Point(this.Width - ship.Width - 100, (this.ClientSize.Height - ship.Height) / 2);
+
             bullets = new List<Bullet>();
+            cows = new List<Cow>();
+            r = new Random();
 
             timer1.Enabled = true;
         }
@@ -57,6 +65,13 @@ namespace BusGame
                     win("Player 1");
                     return;
                 }
+            }
+
+            if (r.Next(1, 50) == 1) {
+                Cow c = new Cow();
+                c.p.X = r.Next(150, this.ClientSize.Width - 150);
+                c.p.Y = r.Next(1, this.ClientSize.Height - cow.Height);
+                cows.Add(c);
             }
 
             this.Refresh();
@@ -82,6 +97,10 @@ namespace BusGame
 
             foreach (Bullet b in bullets) {
                 g.DrawImage(bullet, b.p);
+            }
+
+            foreach (Cow c in cows) {
+                g.DrawImage(cow, c.p);
             }
         }
 
@@ -115,5 +134,10 @@ namespace BusGame
     {
         public Point p;
         public Point v;
+    }
+
+    public class Cow
+    {
+        public Point p;
     }
 }
