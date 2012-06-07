@@ -23,14 +23,16 @@ namespace BusGame
             InitializeComponent();
             newgame();
         }
-
+        
         public void newgame() {
             ship = new Bitmap(Application.StartupPath + "\\Ship.png");
             bullet = new Bitmap(Application.StartupPath + "\\Bullet.png");
 
-            player1 = new Point(100, this.Height / 2);
-            player2 = new Point(this.Width - 100, this.Height / 2);
+            player1 = new Point(100, (this.ClientSize.Height - ship.Height) / 2);
+            player2 = new Point(this.Width - ship.Width - 100, (this.ClientSize.Height - ship.Height) / 2);
             bullets = new List<Bullet>();
+
+            timer1.Enabled = true;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -55,6 +57,7 @@ namespace BusGame
 
         private void win(string who)
         {
+            timer1.Enabled = false;
             MessageBox.Show(who + " wins!");
             newgame();
         }
