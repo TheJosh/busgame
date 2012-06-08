@@ -65,12 +65,24 @@ namespace BusGame
                     win("Player 1");
                     return;
                 }
+
+                foreach (Cow c in cows) {
+                    Rectangle p = new Rectangle(c.p.X, c.p.Y, cow.Width, cow.Height);
+                    if (p.Contains(b.p)) {
+                        c.h--;
+                        b.h--;
+                    }
+                }
             }
+
+            bullets.RemoveAll(b => b.h == 0);
+            cows.RemoveAll(c => c.h == 0);
 
             if (r.Next(1, 50) == 1) {
                 Cow c = new Cow();
                 c.p.X = r.Next(150, this.ClientSize.Width - 150);
                 c.p.Y = r.Next(1, this.ClientSize.Height - cow.Height);
+                c.h = 3;
                 cows.Add(c);
             }
 
@@ -126,6 +138,7 @@ namespace BusGame
             b.p.X += ship.Width * Math.Sign(velx);
             b.p.Y += ship.Height / 2;
             b.v = new Point(velx, 0);
+            b.h = 1;
             bullets.Add(b);
         }
     }
@@ -134,10 +147,12 @@ namespace BusGame
     {
         public Point p;
         public Point v;
+        public int h;
     }
 
     public class Cow
     {
         public Point p;
+        public int h;
     }
 }
