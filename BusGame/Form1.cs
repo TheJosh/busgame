@@ -14,6 +14,7 @@ namespace BusGame
         Bitmap ship;
         Bitmap bullet;
         Bitmap cow;
+        Bitmap bg;
 
         Point player1;
         Point player2;
@@ -28,7 +29,8 @@ namespace BusGame
             ship = new Bitmap(Application.StartupPath + "\\Ship.png");
             bullet = new Bitmap(Application.StartupPath + "\\Bullet.png");
             cow = new Bitmap(Application.StartupPath + "\\Cow.png");
-            
+            bg = new Bitmap(Application.StartupPath + "\\Bg.png");
+
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.DoubleBuffered = true;
@@ -100,19 +102,22 @@ namespace BusGame
         {
             Graphics g = e.Graphics;
 
-            g.FillRectangle(Brushes.White, new Rectangle(0, 0, this.Size.Width, this.Size.Height));
+            using (TextureBrush b = new TextureBrush(bg)) {
+                g.FillRectangle(b, new Rectangle(0, 0, this.Size.Width, this.Size.Height));
+            }
 
             g.DrawImage(ship, player1);
             ship.RotateFlip(RotateFlipType.RotateNoneFlipX);
             g.DrawImage(ship, player2);
             ship.RotateFlip(RotateFlipType.RotateNoneFlipX);
 
-            foreach (Bullet b in bullets) {
-                g.DrawImage(bullet, b.p);
-            }
-
             foreach (Cow c in cows) {
                 g.DrawImage(cow, c.p);
+         
+            }
+
+            foreach (Bullet b in bullets) {
+                g.DrawImage(bullet, b.p);
             }
         }
 
