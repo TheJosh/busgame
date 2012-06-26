@@ -16,6 +16,8 @@ namespace BusGame
         Bitmap cow;
         Bitmap bg;
 
+        int t;
+
         Ship player1;
         Ship player2;
         List<Bullet> bullets;
@@ -45,20 +47,25 @@ namespace BusGame
             player1 = new Ship();
             player1.p = new Point(100, (this.ClientSize.Height - ship.Height) / 2);
             player1.h = 5;
+            player1.lastshot = 0;
 
             player2 = new Ship();
             player2.p = new Point(this.Width - ship.Width - 100, (this.ClientSize.Height - ship.Height) / 2);
             player2.h = 5;
+            player2.lastshot = 0;
 
             bullets = new List<Bullet>();
             cows = new List<Cow>();
             r = new Random();
 
+            t = 0;
             timer1.Enabled = true;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            t++;
+
             Rectangle p1 = new Rectangle(player1.p.X, player1.p.Y, ship.Width, ship.Height);
             Rectangle p2 = new Rectangle(player2.p.X, player2.p.Y, ship.Width, ship.Height);
 
@@ -155,6 +162,8 @@ namespace BusGame
 
         private void fire(Ship player, int velx)
         {
+            if (t - player.lastshot < 5) return;
+
             Bullet b = new Bullet();
             b.p = player.p;
             b.p.X += ship.Width * Math.Sign(velx);
@@ -162,12 +171,15 @@ namespace BusGame
             b.v = new Point(velx, 0);
             b.h = 1;
             bullets.Add(b);
+
+            player.lastshot = t;
         }
     }
 
     public class Ship {
         public Point p;
         public int h;
+        public int lastshot;
     }
 
     public class Bullet
