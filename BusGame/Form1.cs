@@ -95,8 +95,8 @@ namespace BusGame
                 }
             }
 
-            bullets.RemoveAll(b => b.h == 0);
-            cows.RemoveAll(c => c.h == 0);
+            bullets.RemoveAll(b => b.h <= 0);
+            cows.RemoveAll(c => c.h <= 0);
 
             foreach (Bullet b in bullets) {
                 if (p1.Contains(b.p)) {
@@ -116,14 +116,16 @@ namespace BusGame
             if (player1.h == 0) win("Player 2");
             if (player2.h == 0) win("Player 1");
 
-            bullets.RemoveAll(b => b.h == 0);
+            bullets.RemoveAll(b => b.h <= 0);
 
-            if (r.Next(1, 50) == 1) {
-                Cow c = new Cow();
-                c.p.X = r.Next(150, this.ClientSize.Width - 150);
-                c.p.Y = r.Next(1, this.ClientSize.Height - cow.Height);
-                c.h = 3;
-                cows.Add(c);
+            if (cows.Count < 3) {
+                if (r.Next(1, 50) == 1) {
+                    Cow c = new Cow();
+                    c.p.X = r.Next(150, this.ClientSize.Width - 150);
+                    c.p.Y = r.Next(1, this.ClientSize.Height - cow.Height);
+                    c.h = 3;
+                    cows.Add(c);
+                }
             }
 
             if (t % 50 == 0) {
@@ -190,11 +192,11 @@ namespace BusGame
             switch (e.KeyCode) {
                 case Keys.Q: player1.p.Y -= 10; break;
                 case Keys.A: player1.p.Y += 10; break;
-                case Keys.E: fire(player1, 30); break;
+                case Keys.E: fire(player1, 65); break;
 
                 case Keys.O: player2.p.Y -= 10; break;
                 case Keys.L: player2.p.Y += 10; break;
-                case Keys.U: fire(player2, -30); break;
+                case Keys.U: fire(player2, -65); break;
 
                 case Keys.Escape: Application.Exit(); break;
             }
