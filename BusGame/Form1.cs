@@ -22,6 +22,7 @@ namespace BusGame
         Ship player2;
         List<Bullet> bullets;
         List<Cow> cows;
+        List<Msg> msgs;
         Random r;
 
         public Form1()
@@ -58,6 +59,7 @@ namespace BusGame
 
             bullets = new List<Bullet>();
             cows = new List<Cow>();
+            msgs = new List<Msg>();
             r = new Random();
 
             t = 0;
@@ -81,7 +83,14 @@ namespace BusGame
                     if (p.Contains(b.p)) {
                         c.h--;
                         b.h--;
-                        if (c.h == 0) b.s.h++;
+                        if (c.h == 0) {
+                            b.s.h++;
+                            msg("blugh", b.p.X + 20, b.p.Y - 40, Brushes.Red);
+                            msg("+1", b.s.p.X + 10, b.s.p.Y - 20, Brushes.Green);
+
+                        } else {
+                            msg("moo", b.p.X + 23, b.p.Y - 40, Brushes.Red);
+                        }
                     }
                 }
             }
@@ -93,10 +102,12 @@ namespace BusGame
                 if (p1.Contains(b.p)) {
                     player1.h--;
                     b.h--;
+                    msg("-1", player1.p.X + 10, player1.p.Y - 20, Brushes.Red);
                     return;
                 } else if (p2.Contains(b.p)) {
                     player2.h--;
                     b.h--;
+                    msg("-1", player2.p.X + 10, player2.p.Y - 20, Brushes.Red);
                     return;
                 }
             }
@@ -120,6 +131,13 @@ namespace BusGame
                 player2.ammo = Math.Min(player2.ammo + 5, 15);
             }
 
+            foreach (Msg m in msgs) {
+                m.p.Y -= 4;
+                m.a++;
+            }
+
+            msgs.RemoveAll(m => m.a == 10);
+
             this.Refresh();
         }
 
@@ -133,6 +151,7 @@ namespace BusGame
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
+            Font f;
 
             using (TextureBrush b = new TextureBrush(bg)) {
                 g.FillRectangle(b, new Rectangle(0, 0, this.Size.Width, this.Size.Height));
@@ -152,7 +171,12 @@ namespace BusGame
                 g.DrawImage(bullet, b.p);
             }
 
-            Font f = new System.Drawing.Font("Arial", 26, FontStyle.Bold);
+            f = new System.Drawing.Font("Arial", 12);
+            foreach (Msg m in msgs) {
+                g.DrawString(m.s, f, m.b, m.p);
+            }
+
+            f = new System.Drawing.Font("Arial", 26, FontStyle.Bold);
             g.DrawString(player1.h.ToString(), f, Brushes.White, new PointF(10, 10));
             g.DrawString(player2.h.ToString(), f, Brushes.White, new PointF(this.Size.Width - 40, 10));
 
@@ -193,6 +217,16 @@ namespace BusGame
             player.lastshot = t;
             player.ammo--;
         }
+
+        private void msg(string s, int x, int y, Brush b)
+        {
+            Msg m = new Msg();
+            m.p = new Point(x,y);
+            m.a = 0;
+            m.s = s;
+            m.b = b;
+            msgs.Add(m);
+        }
     }
 
     public class Ship {
@@ -214,5 +248,13 @@ namespace BusGame
     {
         public Point p;
         public int h;
+    }
+
+    public class Msg
+    {
+        public Point p;
+        public string s;
+        public int a;
+        public Brush b;
     }
 }
