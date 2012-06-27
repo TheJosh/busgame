@@ -48,11 +48,13 @@ namespace BusGame
             player1.p = new Point(100, (this.ClientSize.Height - ship.Height) / 2);
             player1.h = 5;
             player1.lastshot = 0;
+            player1.ammo = 12;
 
             player2 = new Ship();
             player2.p = new Point(this.Width - ship.Width - 100, (this.ClientSize.Height - ship.Height) / 2);
             player2.h = 5;
             player2.lastshot = 0;
+            player2.ammo = 12;
 
             bullets = new List<Bullet>();
             cows = new List<Cow>();
@@ -112,6 +114,11 @@ namespace BusGame
                 cows.Add(c);
             }
 
+            if (t % 50 == 0) {
+                player1.ammo = Math.Min(player1.ammo + 5, 15);
+                player2.ammo = Math.Min(player2.ammo + 5, 15);
+            }
+
             this.Refresh();
         }
 
@@ -143,6 +150,14 @@ namespace BusGame
             foreach (Bullet b in bullets) {
                 g.DrawImage(bullet, b.p);
             }
+
+            Font f = new System.Drawing.Font("Arial", 26, FontStyle.Bold);
+            g.DrawString(player1.h.ToString(), f, Brushes.White, new PointF(10, 10));
+            g.DrawString(player2.h.ToString(), f, Brushes.White, new PointF(this.Size.Width - 40, 10));
+
+            f = new System.Drawing.Font("Arial", 16);
+            g.DrawString(player1.ammo.ToString(), f, Brushes.White, new PointF(33, 29));
+            g.DrawString(player2.ammo.ToString(), f, Brushes.White, new PointF(this.Size.Width - 65, 29));
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -162,7 +177,8 @@ namespace BusGame
 
         private void fire(Ship player, int velx)
         {
-            if (t - player.lastshot < 5) return;
+            if (t - player.lastshot < 4) return;
+            if (player.ammo == 0) return;
 
             Bullet b = new Bullet();
             b.p = player.p;
@@ -173,6 +189,7 @@ namespace BusGame
             bullets.Add(b);
 
             player.lastshot = t;
+            player.ammo--;
         }
     }
 
@@ -180,6 +197,7 @@ namespace BusGame
         public Point p;
         public int h;
         public int lastshot;
+        public int ammo;
     }
 
     public class Bullet
