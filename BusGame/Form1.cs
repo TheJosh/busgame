@@ -81,6 +81,7 @@ namespace BusGame
                     if (p.Contains(b.p)) {
                         c.h--;
                         b.h--;
+                        if (c.h == 0) b.s.h++;
                     }
                 }
             }
@@ -186,6 +187,7 @@ namespace BusGame
             b.p.Y += ship.Height / 2;
             b.v = new Point(velx, 0);
             b.h = 1;
+            b.s = player;
             bullets.Add(b);
 
             player.lastshot = t;
@@ -205,6 +207,7 @@ namespace BusGame
         public Point p;
         public Point v;
         public int h;
+        public Ship s;
     }
 
     public class Cow
