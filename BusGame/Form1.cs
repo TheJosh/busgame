@@ -25,9 +25,15 @@ namespace BusGame
         List<Msg> msgs;
         Random r;
 
+        const int PHYSICS_DELAY = 5;
+        const int PHYSICS_COUNT = 10;
+
+
         public Form1()
         {
             InitializeComponent();
+
+            this.timer1.Interval = PHYSICS_COUNT * PHYSICS_DELAY;
 
             ship = new Bitmap(Application.StartupPath + "\\Ship.png");
             bullet = new Bitmap(Application.StartupPath + "\\Bullet.png");
@@ -70,11 +76,42 @@ namespace BusGame
         {
             t++;
 
+            for (int i = 1; i <= PHYSICS_COUNT; i++) {
+                physics_tick(PHYSICS_DELAY);
+            }
+
+            if (cows.Count < 3) {
+                if (r.Next(1, 50) == 1) {
+                    Cow c = new Cow();
+                    c.p.X = r.Next(150, this.ClientSize.Width - 150);
+                    c.p.Y = r.Next(1, this.ClientSize.Height - cow.Height);
+                    c.h = 3;
+                    cows.Add(c);
+                }
+            }
+
+            if (t % 50 == 0) {
+                player1.ammo = Math.Min(player1.ammo + 5, 15);
+                player2.ammo = Math.Min(player2.ammo + 5, 15);
+            }
+
+            foreach (Msg m in msgs) {
+                m.p.Y -= 4;
+                m.a++;
+            }
+
+            msgs.RemoveAll(m => m.a == 10);
+
+            this.Refresh();
+        }
+
+        private void physics_tick(float ms)
+        {
             Rectangle p1 = new Rectangle(player1.p.X, player1.p.Y, ship.Width, ship.Height);
             Rectangle p2 = new Rectangle(player2.p.X, player2.p.Y, ship.Width, ship.Height);
 
             foreach (Bullet b in bullets) {
-                b.p.X += b.v.X;
+                b.p.X += (int)Math.Round(b.v.X * ms);
             }
 
             foreach (Bullet b in bullets) {
@@ -117,30 +154,6 @@ namespace BusGame
             if (player2.h == 0) win("Player 1");
 
             bullets.RemoveAll(b => b.h <= 0);
-
-            if (cows.Count < 3) {
-                if (r.Next(1, 50) == 1) {
-                    Cow c = new Cow();
-                    c.p.X = r.Next(150, this.ClientSize.Width - 150);
-                    c.p.Y = r.Next(1, this.ClientSize.Height - cow.Height);
-                    c.h = 3;
-                    cows.Add(c);
-                }
-            }
-
-            if (t % 50 == 0) {
-                player1.ammo = Math.Min(player1.ammo + 5, 15);
-                player2.ammo = Math.Min(player2.ammo + 5, 15);
-            }
-
-            foreach (Msg m in msgs) {
-                m.p.Y -= 4;
-                m.a++;
-            }
-
-            msgs.RemoveAll(m => m.a == 10);
-
-            this.Refresh();
         }
 
         private void win(string who)
@@ -192,17 +205,17 @@ namespace BusGame
             switch (e.KeyCode) {
                 case Keys.Q: player1.p.Y -= 10; break;
                 case Keys.A: player1.p.Y += 10; break;
-                case Keys.E: fire(player1, 65); break;
+                case Keys.E: fire(player1, 2.5f); break;
 
                 case Keys.O: player2.p.Y -= 10; break;
                 case Keys.L: player2.p.Y += 10; break;
-                case Keys.U: fire(player2, -65); break;
+                case Keys.U: fire(player2, -2.5f); break;
 
                 case Keys.Escape: Application.Exit(); break;
             }
         }
 
-        private void fire(Ship player, int velx)
+        private void fire(Ship player, float velx)
         {
             if (t - player.lastshot < 4) return;
             if (player.ammo == 0) return;
@@ -211,7 +224,7 @@ namespace BusGame
             b.p = player.p;
             b.p.X += ship.Width * Math.Sign(velx);
             b.p.Y += ship.Height / 2;
-            b.v = new Point(velx, 0);
+            b.v = new PointF(velx, 0);
             b.h = 1;
             b.s = player;
             bullets.Add(b);
@@ -241,7 +254,7 @@ namespace BusGame
     public class Bullet
     {
         public Point p;
-        public Point v;
+        public PointF v;
         public int h;
         public Ship s;
     }
