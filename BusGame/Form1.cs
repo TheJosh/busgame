@@ -24,6 +24,7 @@ namespace BusGame
         List<Cow> cows;
         List<Msg> msgs;
         Random r;
+        bool [] keys;
 
         const int PHYSICS_DELAY = 5;
         const int PHYSICS_COUNT = 10;
@@ -43,6 +44,8 @@ namespace BusGame
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.DoubleBuffered = true;
+
+            keys = new bool[4];
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -56,12 +59,14 @@ namespace BusGame
             player1.h = 5;
             player1.lastshot = 0;
             player1.ammo = 12;
+            keys[0] = keys[1] = false;
 
             player2 = new Ship();
             player2.p = new Point(this.Width - ship.Width - 100, (this.ClientSize.Height - ship.Height) / 2);
             player2.h = 5;
             player2.lastshot = 0;
             player2.ammo = 12;
+            keys[2] = keys[3] = false;
 
             bullets = new List<Bullet>();
             cows = new List<Cow>();
@@ -113,6 +118,9 @@ namespace BusGame
             foreach (Bullet b in bullets) {
                 b.p.X += (int)Math.Round(b.v.X * ms);
             }
+
+            if (keys[0]) { player1.p.Y -= 1; } else if (keys[1]) { player1.p.Y += 1; }
+            if (keys[2]) { player2.p.Y -= 1; } else if (keys[3]) { player2.p.Y += 1; }
 
             foreach (Bullet b in bullets) {
                 foreach (Cow c in cows) {
@@ -200,15 +208,25 @@ namespace BusGame
             g.DrawString(player2.ammo.ToString(), f, Brushes.White, new PointF(this.Size.Width - 65, 29));
         }
 
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode) {
+                case Keys.Q: keys[0] = true; break;
+                case Keys.A: keys[1] = true; break;
+                case Keys.O: keys[2] = true; break;
+                case Keys.L: keys[3] = true; break;
+            }
+        }
+
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode) {
-                case Keys.Q: player1.p.Y -= 10; break;
-                case Keys.A: player1.p.Y += 10; break;
+                case Keys.Q: keys[0] = false; break;
+                case Keys.A: keys[1] = false; break;
                 case Keys.E: fire(player1, 2.5f); break;
 
-                case Keys.O: player2.p.Y -= 10; break;
-                case Keys.L: player2.p.Y += 10; break;
+                case Keys.O: keys[2] = false; break;
+                case Keys.L: keys[3] = false; break;
                 case Keys.U: fire(player2, -2.5f); break;
 
                 case Keys.Escape: Application.Exit(); break;
